@@ -30,14 +30,24 @@ export default class HomePageComponent extends Component {
         fetch(constants.githubApiUrl.replace('{github_id}',this.state.userID))
         .then(response => response.json())
         .then(responseJSON => {
-            this.setState({
-                userDetails: responseJSON
-            })
+            console.log('***** ', responseJSON)
+
+            if ( responseJSON.message === 'Not Found' ) {
+                this.setState({
+                    userNotFound: true
+                });
+            }
+            else {
+                this.setState({
+                    userDetails: responseJSON,
+                    userNotFound: false
+                });
+            }
         });
     }
 
     render() {
-        const { userDetails } = this.state;
+        const { userDetails, userNotFound } = this.state;
         return (
             <View style={styles.container}>
                 <View style={styles.sectionContainer}>
@@ -49,6 +59,13 @@ export default class HomePageComponent extends Component {
                     onSubmitEditing={(evt) => this.getInfo(evt)}
                 />
                 </View>
+                { userNotFound && 
+                    <View style={styles.sectionContainer}>
+                        <View style={styles.detail}>
+                            <Text style={styles.heading}>Sorry! User not found!</Text>
+                        </View>
+                    </View>
+                }
                 { userDetails && 
                     <View style={styles.sectionContainer}>
                         <View style={styles.detail}>
